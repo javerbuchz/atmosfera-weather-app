@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101820">
+  <meta name="description" content="Pronóstico meteorológico preciso, simple y visual, impulsado por Open-Meteo.">
+  <title>Clima — Atmósfera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Atmósfera inicio"><span class="brand-mark">a</span><span>atmósfera<span class="brand-dot">.</span></span></a>
+      <div class="top-meta"><span class="live-dot"></span><span>DATOS EN VIVO</span><span class="meta-divider"></span><span id="updatedAt">Actualizando…</span></div>
+      <div class="top-actions">
+        <button class="unit-toggle" id="unitToggle" aria-label="Cambiar unidad de temperatura">°C <span>/</span> °F</button>
+        <button class="icon-button" id="refreshBtn" title="Actualizar" aria-label="Actualizar pronóstico">↻</button>
+      </div>
+    </header>
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow">TU PRONÓSTICO, EN CONTEXTO</p><h1>El clima de<br><em>tu mundo.</em></h1></div>
+        <p class="intro-copy">Todo lo que necesitás saber para<br class="desktop-only"> anticiparte al día.</p>
+      </section>
+      <section class="search-row">
+        <div class="search-wrap">
+          <span class="search-icon">⌕</span>
+          <input id="citySearch" type="search" placeholder="Buscar ciudad o localidad…" autocomplete="off" aria-label="Buscar ciudad">
+          <kbd>↵</kbd><div class="suggestions hidden" id="suggestions"></div>
+        </div>
+        <button class="location-btn" id="locationBtn"><span>◎</span> Mi ubicación</button>
+      </section>
+      <div id="errorBanner" class="error-banner hidden" role="alert"></div>
+      <div id="loading" class="loading-state"><span class="loader"></span> Consultando el cielo…</div>
+      <div id="weatherApp" class="hidden">
+        <section class="hero-grid">
+          <article class="current-card panel">
+            <div class="current-top"><div><p class="eyebrow">AHORA MISMO</p><h2 id="placeName">Buenos Aires</h2><p class="place-sub" id="placeSub">Argentina · Local</p></div><button class="favorite-btn" id="favoriteBtn" title="Guardar ubicación" aria-label="Guardar ubicación">♡</button></div>
+            <div class="current-main"><div class="temperature-wrap"><div class="weather-glyph" id="currentIcon">☀</div><div class="temperature" id="currentTemp">--°</div></div><div class="current-description"><h3 id="currentDescription">Cargando…</h3><p>Sensación térmica <strong id="feelsLike">--°</strong></p><div class="minmax"><span>↓ <b id="todayMin">--°</b></span><span>↑ <b id="todayMax">--°</b></span></div></div></div>
+            <div class="current-footer"><span id="currentDate">—</span><span class="sun-time">☀ <span id="sunrise">--:--</span> <span class="sun-sep">/</span> ☾ <span id="sunset">--:--</span></span></div>
+          </article>
+          <article class="insight-card panel"><div class="card-heading"><div><p class="eyebrow">CONDICIONES</p><h3>En detalle</h3></div><span class="heading-icon">✳</span></div>
+            <div class="metrics-grid">
+              <div class="metric"><span class="metric-icon">◌</span><span class="metric-label">Humedad</span><strong id="humidity">--<small>%</small></strong><span class="metric-note">Humedad relativa</span></div>
+              <div class="metric"><span class="metric-icon">⌁</span><span class="metric-label">Viento</span><strong id="wind">--<small> km/h</small></strong><span class="metric-note" id="windDirection">—</span></div>
+              <div class="metric"><span class="metric-icon">◉</span><span class="metric-label">Prob. lluvia</span><strong id="rainChance">--<small>%</small></strong><span class="metric-note">Próxima hora</span></div>
+              <div class="metric"><span class="metric-icon">◍</span><span class="metric-label">Presión</span><strong id="pressure">--<small> hPa</small></strong><span class="metric-note">A nivel del mar</span></div>
+              <div class="metric"><span class="metric-icon">☼</span><span class="metric-label">Índice UV</span><strong id="uv">--</strong><span class="metric-note" id="uvNote">Índice actual</span></div>
+              <div class="metric"><span class="metric-icon">◌</span><span class="metric-label">Visibilidad</span><strong id="visibility">--<small> km</small></strong><span class="metric-note">Distancia visible</span></div>
+            </div>
+          </article>
+        </section>
+        <section class="section-block"><div class="section-heading"><div><p class="eyebrow">LAS PRÓXIMAS HORAS</p><h2>El día, hora a hora</h2></div><span class="section-aside" id="hourlySummary">Pronóstico horario</span></div><div class="hourly-panel panel"><div class="hourly-scroll" id="hourlyList"></div></div></section>
+        <section class="section-block forecast-section"><div class="section-heading"><div><p class="eyebrow">TENDENCIA SEMANAL</p><h2>Los próximos 7 días</h2></div><span class="section-aside">Máximas y mínimas</span></div><div class="forecast-panel panel" id="dailyList"></div></section>
+        <section class="bottom-grid">
+          <article class="air-panel panel"><div class="card-heading"><div><p class="eyebrow">CALIDAD DEL AIRE</p><h3>Respirá tranquilo</h3></div><span class="heading-icon">◉</span></div><div class="air-main"><div class="aqi-number" id="aqiValue">--</div><div><strong id="aqiLabel">Consultando…</strong><p id="aqiDescription">Índice de calidad del aire</p></div></div><div class="aqi-scale"><span></span><span></span><span></span><span></span><span></span></div><div class="air-details"><div><span>PM2.5</span><strong id="pm25">-- <small>µg/m³</small></strong></div><div><span>PM10</span><strong id="pm10">-- <small>µg/m³</small></strong></div><div><span>Ozono</span><strong id="ozone">-- <small>µg/m³</small></strong></div></div><p class="air-footnote" id="airFootnote">Datos de calidad del aire estimados por modelo.</p></article>
+          <article class="sun-panel panel"><div class="card-heading"><div><p class="eyebrow">LUZ NATURAL</p><h3>El recorrido del sol</h3></div><span class="heading-icon">☼</span></div><div class="sun-visual"><div class="sun-arc"></div><div class="sun-horizon"></div><div class="sun-orb" id="sunOrb">☀</div><div class="sun-label sunrise-label"><strong id="sunrise2">--:--</strong><span>AMANECER</span></div><div class="sun-label sunset-label"><strong id="sunset2">--:--</strong><span>ATARDECER</span></div></div><div class="daylight"><span>Duración del día</span><strong id="dayLength">-- h -- min</strong></div></article>
+        </section>
+      </div>
+    </main>
+    <footer><div class="footer-brand">atmósfera<span class="brand-dot">.</span></div><p>Pronósticos meteorológicos impulsados por <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>. Datos bajo licencia CC BY 4.0.</p><p class="footer-right">Hecho para mirar hacia adelante. <span>✳</span></p></footer>
+  </div>
+  <script src="./app.js"></script>
+</body>
+</html>
