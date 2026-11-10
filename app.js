@@ -215,3 +215,17 @@ const savedAlerts=JSON.parse(localStorage.getItem("atm_alerts")||"null");
 if(savedAlerts){$("alertRain").checked=!!savedAlerts.rain;$("alertStorm").checked=!!savedAlerts.storm;$("alertTemp").checked=!!savedAlerts.temp}
 if("Notification"in window&&Notification.permission==="granted")$("alertStatus").textContent="Permiso concedido. Las alertas se revisan mientras la app está abierta.";
 setInterval(()=>{loadWeather();},15*60*1000);
+
+function renderFavoriteLocations(){
+ const host=$("favoriteLocations");if(!host)return;
+ host.innerHTML=state.favorites.map((p,i)=>'<button class="favorite-location" data-favorite="'+i+'">★ '+p.name+' <span class="remove-favorite" data-remove-favorite="'+i+'">×</span></button>').join("");
+}
+$("favoriteLocations").addEventListener("click",e=>{
+ const remove=e.target.closest("[data-remove-favorite]");
+ if(remove){e.stopPropagation();state.favorites.splice(Number(remove.dataset.removeFavorite),1);localStorage.setItem("atm_favorites",JSON.stringify(state.favorites));renderFavoriteLocations();updateFavorite();return}
+ const b=e.target.closest("[data-favorite]");if(!b)return;
+ const p=state.favorites[Number(b.dataset.favorite)];if(!p||!Number.isFinite(p.latitude)||!Number.isFinite(p.longitude))return;
+ state.place={name:p.name,admin1:p.admin1||"",country:p.country||"",latitude:p.latitude,longitude:p.longitude,timezone:p.timezone||"auto"};loadWeather();
+});
+$("favoriteBtn").addEventListener("click",()=>setTimeout(renderFavoriteLocations,0));
+renderFavoriteLocations();
