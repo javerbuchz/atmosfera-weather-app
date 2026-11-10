@@ -1,5 +1,5 @@
 const $ = (id) => document.getElementById(id);
-const state = { place: {name:"Buenos Aires", admin1:"Ciudad Autónoma de Buenos Aires", country:"Argentina", latitude:-34.6037, longitude:-58.3816, timezone:"America/Argentina/Buenos_Aires"}, weather:null, air:null, fahrenheit:false, favorites:[], searchTimer:null };
+const state = { place: {name:"Buenos Aires", admin1:"Ciudad Autónoma de Buenos Aires", country:"Argentina", latitude:-34.6037, longitude:-58.3816, timezone:"America/Argentina/Buenos_Aires"}, weather:null, air:null, fahrenheit:false, favorites:JSON.parse(localStorage.getItem("atm_favorites")||"[]"), searchTimer:null };
 const WMO = {
   0:["Despejado","☀"],1:["Mayormente despejado","🌤"],2:["Parcialmente nublado","⛅"],3:["Nublado","☁"],
   45:["Niebla","🌫"],48:["Niebla con escarcha","🌫"],51:["Llovizna ligera","🌦"],53:["Llovizna moderada","🌦"],55:["Llovizna intensa","🌧"],
@@ -111,7 +111,8 @@ $("unitToggle").addEventListener("click",()=>{state.fahrenheit=!state.fahrenheit
 $("refreshBtn").addEventListener("click",loadWeather);
 $("favoriteBtn").addEventListener("click",()=>{
   const key=`${state.place.latitude.toFixed(2)},${state.place.longitude.toFixed(2)}`;const i=state.favorites.findIndex(x=>x.key===key);
-  if(i>=0)state.favorites.splice(i,1);else state.favorites.push({key,name:state.place.name});
+  if(i>=0)state.favorites.splice(i,1);else state.favorites.push({key,name:state.place.name,latitude:state.place.latitude,longitude:state.place.longitude,timezone:state.place.timezone});
+  localStorage.setItem("atm_favorites",JSON.stringify(state.favorites));
   updateFavorite();
 });
 loadWeather();
@@ -180,7 +181,7 @@ async function initRadarV2(){
  setTimeout(()=>V2.map&&V2.map.invalidateSize(),300);
 }
 $("radarRefresh").addEventListener("click",initRadarV2);
-function sendWeatherAlert(key,title,body){if(V2.notified.has(key))return;V2.notified.add(key);if(Notification.permission==="granted")new Notification(title,{body,tag:key})}
+function sendWeatherAlert(key,title,body){if(V2.notified.has(key))return;V2.notified.add(key);if(Notification.permission==="granted")new Notification(title,{body,tag:key,icon:"./icons/icon.svg"})}
 function checkAlertsV2(){
  if(!state.weather||!("Notification"in window)||Notification.permission!=="granted")return;
  const p=JSON.parse(localStorage.getItem("atm_alerts")||'{"rain":true,"storm":true,"temp":true}'),c=state.weather.current,h=state.weather.hourly,i=Math.max(0,h.time.findIndex(x=>x>=c.time.slice(0,13))),rain=h.precipitation_probability[i]||0;
