@@ -9,6 +9,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -23,6 +25,7 @@
       </div>
     </header>
     <main>
+      <nav class="feature-nav"><a href="#activitySection">Actividades</a><a href="#compareSection">Ciudades</a><a href="#radarSection">Radar</a><a href="#historySection">Histórico</a><button id="installAppBtn" class="nav-install" hidden>Instalar app</button></nav>
       <section class="intro">
         <div><p class="eyebrow">TU PRONÓSTICO, EN CONTEXTO</p><h1>El clima de<br><em>tu mundo.</em></h1></div>
         <p class="intro-copy">Todo lo que necesitás saber para<br class="desktop-only"> anticiparte al día.</p>
@@ -61,10 +64,23 @@
           <article class="air-panel panel"><div class="card-heading"><div><p class="eyebrow">CALIDAD DEL AIRE</p><h3>Respirá tranquilo</h3></div><span class="heading-icon">◉</span></div><div class="air-main"><div class="aqi-number" id="aqiValue">--</div><div><strong id="aqiLabel">Consultando…</strong><p id="aqiDescription">Índice de calidad del aire</p></div></div><div class="aqi-scale"><span></span><span></span><span></span><span></span><span></span></div><div class="air-details"><div><span>PM2.5</span><strong id="pm25">-- <small>µg/m³</small></strong></div><div><span>PM10</span><strong id="pm10">-- <small>µg/m³</small></strong></div><div><span>Ozono</span><strong id="ozone">-- <small>µg/m³</small></strong></div></div><p class="air-footnote" id="airFootnote">Datos de calidad del aire estimados por modelo.</p></article>
           <article class="sun-panel panel"><div class="card-heading"><div><p class="eyebrow">LUZ NATURAL</p><h3>El recorrido del sol</h3></div><span class="heading-icon">☼</span></div><div class="sun-visual"><div class="sun-arc"></div><div class="sun-horizon"></div><div class="sun-orb" id="sunOrb">☀</div><div class="sun-label sunrise-label"><strong id="sunrise2">--:--</strong><span>AMANECER</span></div><div class="sun-label sunset-label"><strong id="sunset2">--:--</strong><span>ATARDECER</span></div></div><div class="daylight"><span>Duración del día</span><strong id="dayLength">-- h -- min</strong></div></article>
         </section>
+
+        <section class="section-block" id="activitySection">
+          <div class="section-heading"><div><p class="eyebrow">PLANIFICÁ MEJOR</p><h2>¿Qué podés hacer hoy?</h2></div><span class="section-aside">Índice de confort 0–100</span></div>
+          <div class="feature-grid">
+            <article class="feature-card panel"><div class="activity-top"><div><span class="activity-icon">🏃</span><h3>Confort al aire libre</h3><p id="comfortSummary">Calculando condiciones…</p></div><div class="comfort-score" id="comfortScore">--</div></div><div class="comfort-meter"><span id="comfortMeter"></span></div><div class="activity-factors" id="comfortFactors"></div></article>
+            <article class="feature-card panel"><div class="feature-title"><div><p class="eyebrow">RECOMENDADOR</p><h3>Elegí tu actividad</h3></div><span class="heading-icon">✳</span></div><div class="activity-picker" id="activityPicker"><button data-activity="running" class="activity-choice selected">🏃 Running</button><button data-activity="padel" class="activity-choice">🎾 Pádel</button><button data-activity="cycling" class="activity-choice">🚴 Ciclismo</button><button data-activity="walking" class="activity-choice">🚶 Caminata</button><button data-activity="outdoor" class="activity-choice">🌳 Aire libre</button></div><div class="activity-result" id="activityResult">Buscando el mejor horario…</div></article>
+          </div>
+        </section>
+        <section class="section-block" id="compareSection"><div class="section-heading"><div><p class="eyebrow">OTROS DESTINOS</p><h2>Compará ciudades</h2></div><span class="section-aside">Condiciones actuales</span></div><div class="compare-controls"><input id="compareCityInput" type="search" placeholder="Agregar ciudad…" aria-label="Agregar ciudad"><button id="addCompareCity">＋ Agregar</button></div><div class="compare-grid" id="compareGrid"></div></section>
+        <section class="section-block" id="radarSection"><div class="section-heading"><div><p class="eyebrow">PRECIPITACIONES EN MOVIMIENTO</p><h2>Radar meteorológico</h2></div><span class="section-aside" id="radarStatus">Cargando radar…</span></div><div class="radar-panel panel"><div id="weatherRadar"></div><div class="radar-legend"><span>Intensidad de precipitación</span><span>Fuente: RainViewer</span><button id="radarRefresh">Actualizar ↻</button></div></div></section>
+        <section class="section-block" id="alertsSection"><div class="section-heading"><div><p class="eyebrow">ANTICIPATE</p><h2>Alertas inteligentes</h2></div><span class="section-aside">Mientras Atmósfera esté abierta</span></div><div class="alerts-panel panel"><div class="alert-copy"><span class="activity-icon">🔔</span><div><h3>Alertas para esta ubicación</h3><p>Lluvia, tormentas y temperaturas extremas.</p></div></div><div class="alert-settings"><label><input type="checkbox" id="alertRain" checked> Lluvia</label><label><input type="checkbox" id="alertStorm" checked> Tormentas</label><label><input type="checkbox" id="alertTemp" checked> Temperaturas extremas</label><button id="enableAlerts">Activar notificaciones</button></div><p class="alert-status" id="alertStatus">Las alertas locales requieren permiso del navegador.</p></div></section>
+        <section class="section-block" id="historySection"><div class="section-heading"><div><p class="eyebrow">MIRÁ LA EVOLUCIÓN</p><h2>Histórico meteorológico</h2></div><span class="section-aside">Últimos 7 días</span></div><div class="history-panel panel"><div class="history-summary" id="historySummary">Consultando registros…</div><div class="history-chart" id="historyChart"></div><p class="history-note">Archivo histórico de Open-Meteo; puede diferir de estaciones locales.</p></div></section>
       </div>
     </main>
     <footer><div class="footer-brand">atmósfera<span class="brand-dot">.</span></div><p>Pronósticos meteorológicos impulsados por <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open-Meteo</a>. Datos bajo licencia CC BY 4.0.</p><p class="footer-right">Hecho para mirar hacia adelante. <span>✳</span></p></footer>
   </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script src="./app.js"></script>
 </body>
 </html>
