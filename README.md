@@ -1,29 +1,33 @@
-# Atmósfera — Weather Web App
+# Atmósfera 2.0 — Weather Intelligence
 
-Aplicación meteorológica responsive en español, construida con HTML/CSS/JavaScript vanilla y datos de Open-Meteo.
-
-## Ejecutar
-- Abrí `index.html` en un navegador moderno, o serví la carpeta con cualquier servidor estático.
-- Recomendado: `python -m http.server 8080` y navegar a `http://localhost:8080`.
-- La geolocalización requiere HTTPS o localhost.
+Aplicación meteorológica responsive en español con pronóstico, inteligencia de actividades y experiencia PWA.
 
 ## Funcionalidades
-- Condiciones actuales y sensación térmica.
-- Búsqueda de ciudades con Open-Meteo Geocoding.
-- Ubicación actual opcional vía Geolocation API.
-- Pronóstico horario (24 horas) y diario (7 días).
-- Humedad, viento, lluvia, presión, UV y visibilidad.
-- Calidad del aire (European AQI, PM2.5, PM10 y ozono).
-- Amanecer, atardecer y duración de luz solar.
-- Conversión Celsius/Fahrenheit.
-- Diseño responsive para desktop y móvil.
+- Clima actual, pronóstico horario (24 h), semanal (7 días) y calidad del aire.
+- Índice de confort 0–100 y recomendador para running, pádel, ciclismo, caminata y aire libre.
+- Comparación de hasta seis ciudades; la lista queda guardada en el navegador.
+- Radar interactivo de precipitación con Leaflet, OpenStreetMap y RainViewer.
+- Alertas locales de lluvia, tormentas y temperaturas extremas.
+- Histórico de los últimos siete días mediante Open-Meteo Archive.
+- PWA instalable y caché offline del shell principal.
+- Búsqueda, geolocalización, Celsius/Fahrenheit y ubicaciones favoritas persistentes.
 
-## APIs utilizadas
-- Forecast: https://api.open-meteo.com/v1/forecast
-- Geocoding: https://geocoding-api.open-meteo.com/v1/search
-- Air Quality: https://air-quality-api.open-meteo.com/v1/air-quality
+## Publicación
+GitHub Pages desde `main`, carpeta raíz:
+https://javerbuchz.github.io/atmosfera-weather-app/
 
-No requiere API key para uso no comercial. Open-Meteo requiere atribución de los datos bajo CC BY 4.0. Ver https://open-meteo.com/en/docs y https://open-meteo.com/en/docs/air-quality-api.
+## Tecnologías
+Open-Meteo Forecast, Geocoding, Air Quality y Archive APIs; RainViewer; Leaflet; OpenStreetMap; Service Worker y Web App Manifest.
 
-## Nota de uso
-La API gratuita de Open-Meteo está destinada a uso no comercial. Para uso comercial, revisar sus planes y condiciones vigentes.
+## Limitaciones y consideraciones
+- Las alertas implementadas son notificaciones locales evaluadas cada 15 minutos mientras la app está abierta. Push con la app cerrada requiere backend, almacenamiento de suscripciones y claves VAPID.
+- El radar depende de disponibilidad y condiciones del servicio RainViewer.
+- El histórico usa el archivo de Open-Meteo; la disponibilidad puede tener retraso.
+- La API gratuita de Open-Meteo tiene restricciones de uso no comercial. Revisar licencia y plan antes de uso comercial.
+- La PWA requiere HTTPS o localhost.
+
+## Desarrollo
+```bash
+python -m http.server 8080
+```
+Abrir http://localhost:8080.
