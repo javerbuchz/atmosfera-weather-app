@@ -214,4 +214,4 @@ render=function(){baseRenderV2();renderActivityV2();renderCompareShell();initRad
 const savedAlerts=JSON.parse(localStorage.getItem("atm_alerts")||"null");
 if(savedAlerts){$("alertRain").checked=!!savedAlerts.rain;$("alertStorm").checked=!!savedAlerts.storm;$("alertTemp").checked=!!savedAlerts.temp}
 if("Notification"in window&&Notification.permission==="granted")$("alertStatus").textContent="Permiso concedido. Las alertas se revisan mientras la app está abierta.";
-setInterval(checkAlertsV2,15*60*1000);
+setInterval(()=>{loadWeather();},15*60*1000);
