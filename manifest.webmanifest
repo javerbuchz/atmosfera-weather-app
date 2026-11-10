@@ -1,0 +1,7 @@
+{
+  "id":"./","name":"Atmósfera — Clima inteligente","short_name":"Atmósfera",
+  "description":"Pronóstico, radar y planificación inteligente de actividades según el clima.",
+  "lang":"es-AR","start_url":"./","scope":"./","display":"standalone",
+  "background_color":"#101820","theme_color":"#101820","orientation":"portrait-primary",
+  "icons":[{"src":"./icons/icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}
