@@ -67,11 +67,16 @@
         </section>
 
         <section class="section-block" id="activitySection">
-          <div class="section-heading"><div><p class="eyebrow">PLANIFICÁ MEJOR</p><h2>¿Qué podés hacer hoy?</h2></div><span class="section-aside">Índice de confort 0–100</span></div>
-          <div class="feature-grid">
-            <article class="feature-card panel"><div class="activity-top"><div><span class="activity-icon">🏃</span><h3>Confort al aire libre</h3><p id="comfortSummary">Calculando condiciones…</p></div><div class="comfort-score" id="comfortScore">--</div></div><div class="comfort-meter"><span id="comfortMeter"></span></div><div class="activity-factors" id="comfortFactors"></div></article>
-            <article class="feature-card panel"><div class="feature-title"><div><p class="eyebrow">RECOMENDADOR</p><h3>Elegí tu actividad</h3></div><span class="heading-icon">✳</span></div><div class="activity-picker" id="activityPicker"><button data-activity="running" class="activity-choice selected">🏃 Running</button><button data-activity="padel" class="activity-choice">🎾 Pádel</button><button data-activity="cycling" class="activity-choice">🚴 Ciclismo</button><button data-activity="walking" class="activity-choice">🚶 Caminata</button><button data-activity="outdoor" class="activity-choice">🌳 Aire libre</button></div><div class="activity-result" id="activityResult">Buscando el mejor horario…</div></article>
-          </div>
+          <div class="section-heading"><div><p class="eyebrow">PLANIFICÁ MEJOR</p><h2>Actividades al aire libre</h2></div><span class="section-aside">Índice de confort 0–100</span></div>
+          <article class="feature-card panel outdoor-card">
+            <div class="activity-top">
+              <div><span class="activity-icon">🌤️</span><h3>Condiciones para disfrutar al aire libre</h3><p id="comfortSummary">Calculando condiciones…</p></div>
+              <div class="comfort-score" id="comfortScore">--</div>
+            </div>
+            <div class="comfort-meter"><span id="comfortMeter"></span></div>
+            <div class="activity-factors" id="comfortFactors"></div>
+            <div class="outdoor-recommendation" id="activityResult">Buscando la mejor franja horaria…</div>
+          </article>
         </section>
         <section class="section-block" id="compareSection"><div class="section-heading"><div><p class="eyebrow">OTROS DESTINOS</p><h2>Compará ciudades</h2></div><span class="section-aside">Condiciones actuales</span></div><div class="compare-controls"><input id="compareCityInput" type="search" placeholder="Agregar ciudad…" aria-label="Agregar ciudad"><button id="addCompareCity">＋ Agregar</button></div><div class="compare-grid" id="compareGrid"></div></section>
         <section class="section-block" id="radarSection"><div class="section-heading"><div><p class="eyebrow">PRECIPITACIONES EN MOVIMIENTO</p><h2>Radar meteorológico</h2></div><span class="section-aside" id="radarStatus">Cargando radar…</span></div><div class="radar-panel panel"><div id="weatherRadar"></div><div class="radar-legend"><span>Intensidad de precipitación</span><span>Fuente: RainViewer</span><button id="radarRefresh">Actualizar ↻</button></div></div></section>
