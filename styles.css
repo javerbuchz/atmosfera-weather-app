@@ -36,3 +36,7 @@
 .favorite-location{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:18px;background:#ffffff06;color:var(--soft);font:500 10px "DM Sans";cursor:pointer}
 .favorite-location:hover{border-color:#8ed8ec77;color:var(--accent)}
 .favorite-location .remove-favorite{color:var(--muted);font-size:13px;margin-left:2px}
+
+/* Actividades al aire libre: bloque unificado */
+.outdoor-card{max-width:none}
+.outdoor-recommendation{font-size:12px;line-height:1.7;color:var(--soft);border-top:1px solid var(--line);padding-top:14px;margin-top:15px}
