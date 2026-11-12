@@ -117,34 +117,40 @@ $("favoriteBtn").addEventListener("click",()=>{
 });
 loadWeather();
 
-// ATMO V2: activity intelligence, city comparison, precipitation radar, alerts, archive and PWA
-const V2={activity:"running",cities:JSON.parse(localStorage.getItem("atm_cities")||"[]"),map:null,radarLayer:null,notified:new Set(),installPrompt:null};
-const activityRules={running:{name:"Running",wind:28,rain:25,heat:31,cold:5},padel:{name:"Pádel",wind:22,rain:15,heat:30,cold:8},cycling:{name:"Ciclismo",wind:24,rain:15,heat:30,cold:5},walking:{name:"Caminata",wind:35,rain:50,heat:34,cold:2},outdoor:{name:"Aire libre",wind:30,rain:35,heat:33,cold:4}};
-function activityScore(t,r,w,h,uv,key){
- const a=activityRules[key]||activityRules.outdoor;let n=100;
- if(t>a.heat)n-=Math.min(35,(t-a.heat)*5);if(t<a.cold)n-=Math.min(30,(a.cold-t)*4);
- if(r>a.rain)n-=Math.min(45,(r-a.rain)*.9);if(w>a.wind)n-=Math.min(25,(w-a.wind)*1.3);
- if(h>80)n-=Math.min(15,(h-80)*.7);if(uv>=8)n-=12;else if(uv>=6)n-=6;
+// ATMO V2: outdoor comfort and best time recommendation
+const V2={cities:JSON.parse(localStorage.getItem("atm_cities")||"[]"),map:null,radarLayer:null,notified:new Set(),installPrompt:null};
+function outdoorComfort(t,r,w,h,uv){
+ let n=100;
+ if(t>30)n-=Math.min(35,(t-30)*5);
+ if(t<7)n-=Math.min(30,(7-t)*4);
+ if(r>20)n-=Math.min(45,(r-20)*.9);
+ if(w>25)n-=Math.min(25,(w-25)*1.3);
+ if(h>80)n-=Math.min(15,(h-80)*.7);
+ if(uv>=8)n-=12;else if(uv>=6)n-=6;
  return Math.max(0,Math.min(100,Math.round(n)));
 }
 function scoreName(n){return n>=85?"Excelente":n>=70?"Muy bueno":n>=50?"Aceptable":n>=30?"Desfavorable":"No recomendado"}
 function renderActivityV2(){
  if(!state.weather)return;
  const c=state.weather.current,h=state.weather.hourly,d=state.weather.daily;
- const i=Math.max(0,h.time.findIndex(x=>x>=c.time.slice(0,13))),rain=h.precipitation_probability[i]||0,uv=d.uv_index_max[0]||0;
- const n=activityScore(c.temperature_2m,rain,c.wind_speed_10m,c.relative_humidity_2m,uv,"outdoor");
- $("comfortScore").textContent=n;$("comfortMeter").style.width=n+"%";
- $("comfortSummary").textContent=scoreName(n)+" para actividades al aire libre en "+state.place.name+".";
- $("comfortFactors").innerHTML=["🌡 "+Math.round(c.temperature_2m)+"°C","💧 "+rain+"% lluvia","〰 "+Math.round(c.wind_speed_10m)+" km/h viento","☼ UV "+uv.toFixed(1)].map(x=>'<span class="factor-chip">'+x+"</span>").join("");
- const start=i,items=[];
- for(let j=start;j<Math.min(start+18,h.time.length);j++){
-  const day=Math.max(0,d.time.indexOf(h.time[j].slice(0,10)));
-  items.push({score:activityScore(h.temperature_2m[j],h.precipitation_probability[j]||0,h.wind_speed_10m[j],h.relative_humidity_2m[j],d.uv_index_max[day]||0,V2.activity),time:h.time[j].slice(11,16),temp:h.temperature_2m[j],rain:h.precipitation_probability[j]||0,wind:h.wind_speed_10m[j]});
+ const nowIndex=Math.max(0,h.time.findIndex(x=>x>=c.time.slice(0,13)));
+ const rain=h.precipitation_probability[nowIndex]||0,uv=d.uv_index_max[0]||0;
+ const currentScore=outdoorComfort(c.temperature_2m,rain,c.wind_speed_10m,c.relative_humidity_2m,uv);
+ $("comfortScore").textContent=currentScore;
+ $("comfortMeter").style.width=currentScore+"%";
+ $("comfortSummary").textContent=scoreName(currentScore)+" para actividades al aire libre en "+state.place.name+".";
+ $("comfortFactors").innerHTML=["🌡 "+Math.round(c.temperature_2m)+"°C","💧 "+rain+"% de lluvia","〰 "+Math.round(c.wind_speed_10m)+" km/h de viento","☼ UV "+uv.toFixed(1)].map(x=>'<span class="factor-chip">'+x+"</span>").join("");
+ const candidates=[];
+ for(let i=nowIndex;i<Math.min(nowIndex+18,h.time.length);i++){
+  const dayIndex=Math.max(0,d.time.indexOf(h.time[i].slice(0,10)));
+  const probability=h.precipitation_probability[i]||0;
+  const score=outdoorComfort(h.temperature_2m[i],probability,h.wind_speed_10m[i],h.relative_humidity_2m[i],d.uv_index_max[dayIndex]||0);
+  candidates.push({score,time:h.time[i].slice(11,16),temp:h.temperature_2m[i],rain:probability,wind:h.wind_speed_10m[i]});
  }
- items.sort((a,b)=>b.score-a.score);const best=items[0];
- $("activityResult").innerHTML=best?"<strong>"+activityRules[V2.activity].name+": "+scoreName(best.score)+" · "+best.time+"</strong><br>Confort estimado "+best.score+"/100 · "+Math.round(best.temp)+"°C · lluvia "+best.rain+"% · viento "+Math.round(best.wind)+" km/h.<br><small>Estimación orientativa, no sustituye alertas oficiales.</small>":"No hay datos horarios suficientes.";
+ candidates.sort((x,y)=>y.score-x.score);
+ const best=candidates[0];
+ $("activityResult").innerHTML=best?"<strong>Mejor momento estimado: "+best.time+" · "+scoreName(best.score)+"</strong><br>Confort "+best.score+"/100 · "+Math.round(best.temp)+"°C · lluvia "+best.rain+"% · viento "+Math.round(best.wind)+" km/h.<br><small>Evaluación general de temperatura, lluvia, viento, humedad y radiación UV. Es orientativa y no reemplaza alertas oficiales.</small>":"No hay datos horarios suficientes para recomendar un horario.";
 }
-$("activityPicker").addEventListener("click",e=>{const b=e.target.closest("[data-activity]");if(!b)return;V2.activity=b.dataset.activity;document.querySelectorAll(".activity-choice").forEach(x=>x.classList.toggle("selected",x===b));renderActivityV2()});
 function renderCompareShell(){
  if(!V2.cities.length)V2.cities=[{name:state.place.name,latitude:state.place.latitude,longitude:state.place.longitude,timezone:state.place.timezone},{name:"Córdoba",latitude:-31.4167,longitude:-64.1833,timezone:"America/Argentina/Cordoba"},{name:"Mar del Plata",latitude:-38.0055,longitude:-57.5426,timezone:"America/Argentina/Buenos_Aires"}];
  V2.cities=V2.cities.slice(0,6);localStorage.setItem("atm_cities",JSON.stringify(V2.cities));
